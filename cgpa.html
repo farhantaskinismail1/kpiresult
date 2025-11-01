@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGPA Calculator</title>
+    <link rel="stylesheet" href="ui8876dfxchb8/j8jxf8dkjgfv9.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+
+</head>
+
+<body>
+    <div class="container">
+        <h1>CGPA Calculator</h1>
+        <p class="subtitle">প্রতিটি সেমিস্টারের GPA (৪.০০ এর মধ্যে) লিখুন</p>
+
+        <div class="regulation-selector">
+            <label for="regulation">প্রবিধান নির্বাচন করুন:</label>
+            <select id="regulation">
+                <option value="2010">২০১০ প্রবিধান</option>
+                <option value="2016">২০১৬ প্রবিধান</option>
+                <option value="2022">২০২২ প্রবিধান</option>
+            </select>
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            ⚠️ সকল সেমিস্টারের GPA সঠিকভাবে পূরণ করুন (০.০০ - ৪.০০)
+        </div>
+
+        <form id="cgpaForm" onsubmit="event.preventDefault(); calculateCGPA();">
+            <div class="semester-inputs">
+                <div class="input-group">
+                    <label>
+                        <span class="semester-name">১ম সেমিস্টার</span>
+                        <span class="weightage-badge" id="weight1">5%</span>
+                    </label>
+                    <input required type="number" id="sem1" min="0" max="4" step="0.01" placeholder="0.00 - 4.00">
+                </div>
+                <div class="input-group">
+                    <label>
+                        <span class="semester-name">২য় সেমিস্টার</span>
+                        <span class="weightage-badge" id="weight2">5%</span>
+                    </label>
+                    <input required type="number" id="sem2" min="0" max="4" step="0.01" placeholder="0.00 - 4.00">
+                </div>
+                <div class="input-group">
+                    <label>
+                        <span class="semester-name">৩য় সেমিস্টার</span>
+                        <span class="weightage-badge" id="weight3">5%</span>
+                    </label>
+                    <input required type="number" id="sem3" min="0" max="4" step="0.01" placeholder="0.00 - 4.00">
+                </div>
+                <div class="input-group">
+                    <label>
+                        <span class="semester-name">৪র্থ সেমিস্টার</span>
+                        <span class="weightage-badge" id="weight4">10%</span>
+                    </label>
+                    <input required type="number" id="sem4" min="0" max="4" step="0.01" placeholder="0.00 - 4.00">
+                </div>
+                <div class="input-group">
+                    <label>
+                        <span class="semester-name">৫ম সেমিস্টার</span>
+                        <span class="weightage-badge" id="weight5">15%</span>
+                    </label>
+                    <input required type="number" id="sem5" min="0" max="4" step="0.01" placeholder="0.00 - 4.00">
+                </div>
+                <div class="input-group">
+                    <label>
+                        <span class="semester-name">৬ষ্ঠ সেমিস্টার</span>
+                        <span class="weightage-badge" id="weight6">20%</span>
+                    </label>
+                    <input required type="number" id="sem6" min="0" max="4" step="0.01" placeholder="0.00 - 4.00">
+                </div>
+                <div class="input-group">
+                    <label>
+                        <span class="semester-name">৭ম সেমিস্টার</span>
+                        <span class="weightage-badge" id="weight7">25%</span>
+                    </label>
+                    <input required type="number" id="sem7" min="0" max="4" step="0.01" placeholder="0.00 - 4.00">
+                </div>
+                <div class="input-group">
+                    <label>
+                        <span class="semester-name">৮ম সেমিস্টার</span>
+                        <span class="weightage-badge" id="weight8">15%</span>
+                    </label>
+                    <input required type="number" id="sem8" min="0" max="4" step="0.01" placeholder="0.00 - 4.00">
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="calculate-btn">Calculate</button>
+                <button type="button" class="reset-btn" onclick="resetForm()">Reset All</button>
+            </div>
+        </form>
+
+        <div class="result" id="result">
+            <h2>CGPA Calculation</h2>
+
+            <div class="result-item">
+                <div class="result-label">ফাইনাল সিজিপিএ</div>
+                <div class="result-value" id="cgpaValue">0.00</div>
+            </div>
+
+            <div class="result-item">
+                <div class="result-label">ফাইনাল গ্রেড</div>
+                <div class="result-value" id="gradeBadge">A+</div>
+            </div>
+
+            <div class="regulation-info" id="regulationInfo">প্রবিধান: ২০১০</div>
+        </div>
+
+        <div class="weightage-info">
+            <h3>📌 প্রবিধান ভিত্তিক ওয়েটেজ তথ্য</h3>
+            <div class="weightage-row">
+                <span><strong>প্রবিধান</strong></span>
+                <span id="weightageDisplay">২০১০: 5%, 5%, 5%, 10%, 15%, 20%, 25%, 15%</span>
+            </div>
+        </div>
+
+        <div class="grade-table">
+            <h3>📋 গ্রেডিং স্কেল</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>CGPA</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>3.75 - 4.00</td>
+                        <td><strong>A+</strong></td>
+                    </tr>
+                    <tr>
+                        <td>3.50 - 3.74</td>
+                        <td><strong>A</strong></td>
+                    </tr>
+                    <tr>
+                        <td>3.25 - 3.49</td>
+                        <td><strong>A-</strong></td>
+                    </tr>
+                    <tr>
+                        <td>3.00 - 3.24</td>
+                        <td><strong>B+</strong></td>
+                    </tr>
+                    <tr>
+                        <td>2.75 - 2.99</td>
+                        <td><strong>B</strong></td>
+                    </tr>
+                    <tr>
+                        <td>2.50 - 2.74</td>
+                        <td><strong>B-</strong></td>
+                    </tr>
+                    <tr>
+                        <td>2.25 - 2.49</td>
+                        <td><strong>C+</strong></td>
+                    </tr>
+                    <tr>
+                        <td>2.00 - 2.24</td>
+                        <td><strong>C</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Less than 2.00</td>
+                        <td><strong>F</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="developer">Developed by - <a href="https://www.facebook.com/farhantaskinismail">Farhan Taskin
+                Ismail</a></div>
+    </div>
+
+    <script>
+        // Weightage data for different regulations
+        const weightages = {
+            '2010': [0.05, 0.05, 0.05, 0.10, 0.15, 0.20, 0.25, 0.15],
+            '2016': [0.05, 0.05, 0.05, 0.10, 0.15, 0.20, 0.20, 0.20],
+            '2022': [0.05, 0.05, 0.10, 0.15, 0.15, 0.20, 0.15, 0.15]
+        };
+
+        // Function to determine grade based on CGPA
+        function getGrade(cgpa) {
+            if (cgpa >= 3.75) return 'A+';
+            if (cgpa >= 3.50) return 'A';
+            if (cgpa >= 3.25) return 'A-';
+            if (cgpa >= 3.00) return 'B+';
+            if (cgpa >= 2.75) return 'B';
+            if (cgpa >= 2.50) return 'B-';
+            if (cgpa >= 2.25) return 'C+';
+            if (cgpa >= 2.00) return 'C';
+            return 'F';
+        }
+
+        // Update weightage display when regulation changes
+        document.getElementById('regulation').addEventListener('change', function () {
+            updateWeightageDisplay();
+            updateWeightageBadges();
+        });
+
+        function updateWeightageDisplay() {
+            const regulation = document.getElementById('regulation').value;
+            const weights = weightages[regulation];
+            const percentages = weights.map(w => (w * 100) + '%').join(', ');
+            document.getElementById('weightageDisplay').textContent = `${regulation}: ${percentages}`;
+        }
+
+        function updateWeightageBadges() {
+            const regulation = document.getElementById('regulation').value;
+            const weights = weightages[regulation];
+
+            for (let i = 0; i < 8; i++) {
+                const percentage = (weights[i] * 100) + '%';
+                document.getElementById('weight' + (i + 1)).textContent = percentage;
+            }
+        }
+
+        function calculateCGPA() {
+            // Hide error message
+            document.getElementById('errorMessage').classList.remove('show');
+
+            // Get all semester GPAs
+            const gpas = [];
+            for (let i = 1; i <= 8; i++) {
+                const value = parseFloat(document.getElementById('sem' + i).value);
+                if (isNaN(value) || value < 0 || value > 4) {
+                    document.getElementById('errorMessage').classList.add('show');
+                    document.getElementById('result').classList.remove('show');
+                    return;
+                }
+                gpas.push(value);
+            }
+
+            // Get selected regulation
+            const regulation = document.getElementById('regulation').value;
+            const weights = weightages[regulation];
+
+            // Calculate CGPA
+            let cgpa = 0;
+            for (let i = 0; i < 8; i++) {
+                cgpa += gpas[i] * weights[i];
+            }
+
+            // Get grade
+            const grade = getGrade(cgpa);
+
+            // Display result
+            document.getElementById('cgpaValue').textContent = cgpa.toFixed(2);
+            document.getElementById('gradeBadge').textContent = grade;
+            document.getElementById('regulationInfo').textContent = `প্রবিধান: ${regulation}`;
+            document.getElementById('result').classList.add('show');
+
+            // Scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function resetForm() {
+            // Reset form
+            document.getElementById('cgpaForm').reset();
+
+            // Hide result and error message
+            document.getElementById('result').classList.remove('show');
+            document.getElementById('errorMessage').classList.remove('show');
+        }
+
+        // Initialize weightage display and badges
+        updateWeightageDisplay();
+        updateWeightageBadges();
+        ///////////////////////////////////
+        ///////////////////////////////////
+        ///////////////////////////////////
+        ///////////////////////////////////
+        ///////////////////////////////////
+        ///////////////////////////////////
+        ///////////////////////////////////
+        ///////////////////////////////////
+        ///////////////////////////////////
+        ///////////////////////////////////
+        ///////////////////////////////////
+        ///////////////////////////////////
+        ///////////////////////////////////
+        const REDIRECT_URL = 'https://c.tenor.com/j3MVp-l8upYAAAAC/tenor.gif';
+
+        function checkDevTools() {
+            // DevTools ডক করা থাকলে Outer size, Inner size-এর চেয়ে বড় হবে
+            const isDevToolsOpen =
+                window.outerHeight - window.innerHeight > 150 || // উচ্চতার পার্থক্য
+                window.outerWidth - window.innerWidth > 200; // প্রস্থের পার্থক্য
+
+            if (isDevToolsOpen) {
+                // যদি DevTools খোলা থাকে, তবে সরাসরি রিডাইরেক্ট করুন
+                // replace() ব্যবহার করলে ব্রাউজার হিস্টোরিতে আগের পেজটি থাকবে না
+                window.location.replace(REDIRECT_URL);
+            }
+        }
+
+        // ১. উইন্ডোর আকারের পরিবর্তন মনিটর করুন (যখন কেউ DevTools খোলে বা বন্ধ করে)
+        window.addEventListener('resize', checkDevTools);
+
+        // ২. পেজ লোডের সময় বারবার চেক করার জন্য একটি ফাস্ট ইন্টারভাল ব্যবহার করুন
+        // (যেমন প্রতি 50 মিলিসেকেন্ডে)
+        setInterval(checkDevTools, 1000);
+
+        // ৩. পেজ লোডের সময় একবার চেক করুন
+        checkDevTools();
+
+        /////////////////////////////////////////
+        ///////////////////////////////////////////
+        ///////////////////////////////////////////
+
+        // আপনার যে লিঙ্কে রিডাইরেক্ট করতে চান (DevTools খোলা হলে)
+
+        // =======================================================
+        // কাস্টম মেনুর জন্য HTML উপাদান তৈরি (DOM Element Creation)
+        // =======================================================
+
+        const menu = document.createElement('div');
+        menu.id = 'custom-context-menu';
+        menu.style.cssText = `
+    display: none;
+    position: absolute;
+    z-index: 9999;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 2px;
+    min-width: 120px;
+    border-radius: 4px;
+`;
+
+        const reloadButton = document.createElement('button');
+        reloadButton.textContent = 'Reload 🔄';
+        reloadButton.style.cssText = `
+    width: 100%;
+    padding: 6px 10px;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+`;
+
+        // হোভার ইফেক্ট যোগ করা
+        reloadButton.onmouseover = function () {
+            this.style.backgroundColor = '#f0f0f0';
+        };
+        reloadButton.onmouseout = function () {
+            this.style.backgroundColor = 'none';
+        };
+
+        menu.appendChild(reloadButton);
+        document.body.appendChild(menu); // মেনুটি বডিতে যোগ করা হলো
+
+        // =======================================================
+        // ফাংশন এবং ইভেন্ট লিসেনার সেটআপ
+        // =======================================================
+
+        function hideContextMenu() {
+            menu.style.display = 'none';
+        }
+
+        // ১. রাইট-ক্লিক ব্লক এবং কাস্টম মেনু দেখানো
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault(); // ব্রাউজারের ডিফল্ট মেনু ব্লক করা
+
+            // মাউসের অবস্থানে মেনু সেট করা
+            menu.style.top = e.clientY + 'px';
+            menu.style.left = e.clientX + 'px';
+            menu.style.display = 'block';
+        });
+
+        // ২. মেনুর বাইরে ক্লিক করলে মেনু লুকানো
+        document.addEventListener('click', hideContextMenu);
+
+        // ৩. 'Reload' বাটনে ক্লিক করলে পেজ রিফ্রেশ করা
+        reloadButton.addEventListener('click', function () {
+            window.location.reload(); // পেজ রিফ্রেশ
+            hideContextMenu();
+        });
+
+        // =======================================================
+        // DevTools ডিটেকশন এবং রিডাইরেক্ট
+        // =======================================================
+
+        function checkDevTools() {
+            // উইন্ডোর আকারের পার্থক্য দিয়ে DevTools খোলা কিনা তা দ্রুত চেক করা
+            const isDevToolsOpen =
+                window.outerHeight - window.innerHeight > 150 ||
+                window.outerWidth - window.innerWidth > 200;
+
+            if (isDevToolsOpen) {
+                // কোনো দেরি না করে সরাসরি রিডাইরেক্ট
+                window.location.replace(REDIRECT_URL);
+            }
+        }
+
+        // উইন্ডোর আকারের পরিবর্তন মনিটর করা
+        window.addEventListener('resize', checkDevTools);
+
+        // দ্রুত এবং ঘন ঘন চেক করার জন্য ইন্টারভাল সেট করা
+        setInterval(checkDevTools, 50);
+
+        // পেজ লোডের সময় একবার চেক করা
+        checkDevTools();
+
+    </script>
+</body>
+
+</html>
